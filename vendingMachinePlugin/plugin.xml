@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+   
+<objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="vendingMachinePlugin.contribution2">
+         <menu
+               label="ProductDatabase"
+               path="additions"
+               id="vendingMachinePlugin.menu2">
+            <separator
+                  name="group2">
+            </separator>
+         </menu>
+         <action
+               label="Open Product Database"
+               class="vendingmachine.plugin.ui.ProductSelectorDialogAction"
+               menubarPath="vendingMachinePlugin.menu2/group2"
+               enablesFor="1"
+               id="vendingMachinePlugin.newAction">
+         </action>
+        
+      </objectContribution>
+      </extension>
+</plugin>

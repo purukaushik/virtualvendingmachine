@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated vm -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="virtualVendingMachine.virtualVendingMachine.presentation.virtualVendingMachineModelWizardID"
+            name="%_UI_virtualVendingMachineModelWizard_label"
+            class="virtualVendingMachine.virtualVendingMachine.presentation.virtualVendingMachineModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/virtualVendingMachineModelFile.gif">
+         <description>%_UI_virtualVendingMachineModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated vm -->
+      <editor
+            id="virtualVendingMachine.virtualVendingMachine.presentation.virtualVendingMachineEditorID"
+            name="%_UI_virtualVendingMachineEditor_label"
+            icon="icons/full/obj16/virtualVendingMachineModelFile.gif"
+            extensions="virtualvendingmachine"
+            class="virtualVendingMachine.virtualVendingMachine.presentation.virtualVendingMachineEditor"
+            contributorClass="virtualVendingMachine.virtualVendingMachine.presentation.virtualVendingMachineActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

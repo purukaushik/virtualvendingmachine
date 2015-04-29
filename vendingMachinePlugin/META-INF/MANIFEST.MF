@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VendingMachinePlugin
+Bundle-SymbolicName: vendingMachinePlugin;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: vendingmachineplugin.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ virtualVendingMachine;bundle-version="0.1.0",
+ org.eclipse.emf.edit.ui,
+ org.eclipse.core.databinding;bundle-version="1.4.0",
+ org.eclipse.jface.databinding;bundle-version="1.5.0",
+ org.eclipse.emf.databinding;bundle-version="1.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
