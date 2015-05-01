@@ -1,43 +1,66 @@
 package vendingmachine.plugin.ui;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.List;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import virtualVendingMachine.virtualVendingMachine.CashRegister;
+import virtualVendingMachine.virtualVendingMachine.PayMachine;
 import virtualVendingMachine.virtualVendingMachine.Product;
+import virtualVendingMachine.virtualVendingMachine.ProductDatabase;
 import virtualVendingMachine.virtualVendingMachine.VirtualVendingMachine;
+import virtualVendingMachine.virtualVendingMachine.virtualVendingMachinePackage;
 
 public class SelectorPanelDialog extends Dialog {
 
-	private SelectorButton[] buttons;
-	private DataBindingContext context;
-	private Binding bindValue;
+	
 	private ComposedAdapterFactory composedAdapterFactory;
 	private Resource resource;
-	private Product[] products;
-	
+	private List<Product> products;
+	private ProductDatabase productDatabase;
+	private CashRegister cashRegister;
+	private PayMachine payMachine;
+	private YourMoneyComposite root;
+	public ComposedAdapterFactory getComposedAdapterFactory() {
+		return composedAdapterFactory;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public ProductDatabase getProductDatabase() {
+		return productDatabase;
+	}
+
+	public CashRegister getCashRegister() {
+		return cashRegister;
+	}
+
+	public PayMachine getPayMachine() {
+		return payMachine;
+	}
 
 	protected SelectorPanelDialog(Shell parentShell) {
 		super(parentShell);
@@ -46,16 +69,9 @@ public class SelectorPanelDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		context = new DataBindingContext();
-
-		Composite root = (Composite) super.createDialogArea(parent);
-		root.setLayout(new GridLayout(5, true));
-
-		buttons = new SelectorButton[5];
-		for (int i = 0; i < 5; i++) {
-			buttons[i] = new SelectorButton(root, this);
-			buttons[i].setProduct(products[i]);
-		}
+		
+		root = new YourMoneyComposite(parent, SWT.NONE,
+				products,this);
 
 		root.layout();
 		parent.pack();
@@ -67,17 +83,16 @@ public class SelectorPanelDialog extends Dialog {
 				getAdapterFactory(), new BasicCommandStack());
 		resource = editingDomain.createResource(file.getFullPath().toString());
 		resource.load(null);
-		// EObject eObject = resource.getContents().get(0); TODO: what to set
-		// here?
-		// setLeague((League) eObject);
-		
-		EObject eObject = resource.getContents().get(0); // vending Machine
-		VirtualVendingMachine machine = (VirtualVendingMachine) eObject;
-		products = (Product[]) machine.getM_pdProducts().getProducts().toArray();
-		
-	}
 
-	
+		EObject eObject = resource.getContents().get(0); // vending Machine
+		VirtualVendingMachine virtualVendingMachine = (VirtualVendingMachine) eObject;
+		this.payMachine = virtualVendingMachine.getM_pmPayMachine();
+		this.cashRegister = virtualVendingMachine.getM_pmPayMachine()
+				.getM_crRegister();
+		this.productDatabase = virtualVendingMachine.getM_pdProducts();
+		products = (List<Product>) productDatabase.getProducts();
+		root.bindValues();
+	}
 
 	protected AdapterFactory getAdapterFactory() {
 		if (composedAdapterFactory == null) {
@@ -87,110 +102,39 @@ public class SelectorPanelDialog extends Dialog {
 		return composedAdapterFactory;
 	}
 
-	class SelectorButton extends Composite {
-		private SelectorPanelDialog selectorPanelDialog;
+	protected void buyItem(Product param) {
 
-		private Composite buyInfoPanel;
-		private Button buyButton;
-		private Button infoButton;
-		private Product product;
-		private Label priceLabel;
+		int productId = param.getM_iID();
 
-		// private Product m_piProduct;
-		private boolean m_bIsSelected;
-
-		public SelectorButton(Composite spParent,
-				SelectorPanelDialog selectorPanelDialog) {
-
-			super(spParent, SWT.None);
-			this.selectorPanelDialog = selectorPanelDialog;
-
-			buyInfoPanel = new Composite(this, SWT.None);
-			buyButton = new Button(buyInfoPanel, SWT.None);
-			infoButton = new Button(buyInfoPanel, SWT.None);
-			FillLayout fillLayout = new FillLayout();
-			fillLayout.type = SWT.HORIZONTAL;
-			buyInfoPanel.setLayout(fillLayout);
-
-			priceLabel = new Label(buyInfoPanel, SWT.LEFT);
-
-			m_bIsSelected = false;
-
-			this.setLayout(new GridLayout());
-
-			buyButton.addListener(SWT.Selection, new Listener() {
-
-				@Override
-				public void handleEvent(Event arg0) {
-					SelectorButton.this.selectorPanelDialog.buyItem(product);
-
-				}
-			});
-			infoButton.addListener(SWT.Selection, new Listener() {
-
-				@Override
-				public void handleEvent(Event arg0) {
-					SelectorButton.this.selectorPanelDialog.showInfo(product);
-
-				}
-			});
-			m_bIsSelected = false;
-			this.setProduct(product);
-		}
-
-		public void setProduct(Product piProduct) {
-			product = piProduct;
-
-			if (piProduct == null) {
-				priceLabel.setImage(null);
-				priceLabel.setText("");
-				buyButton.setEnabled(false);
-				infoButton.setEnabled(false);
-				buyInfoPanel.setBackground(new Color(Display.getCurrent(), 255,
-						0, 0));
-				this.setBackground(new Color(Display.getCurrent(), 211, 211,
-						211));
-			} else {
-				String strPrice = DecimalFormat.getCurrencyInstance().format(
-						piProduct.getM_dPrice());
-
-				// priceLabel.setImage(piProduct.getM_iIcon()); TODO: handle
-				// icons
-				priceLabel.setText(strPrice);
-
-				if (piProduct.getM_iQuantity() > 0) {
-					buyButton.setEnabled(true);
-					infoButton.setEnabled(true);
-					Color darkGray = new Color(Display.getCurrent(), 128, 128,
-							128);
-					buyInfoPanel.setBackground(darkGray);
-					this.setBackground(darkGray);
-				} else {
-					buyButton.setEnabled(false);
-					infoButton.setEnabled(true);
-					Color red = new Color(Display.getCurrent(), 255, 0, 0);
-					buyInfoPanel.setBackground(red);
-					this.setBackground(red);
-				}
+		for (Product pdt : products) {
+			if (productId == pdt.getM_iID()) {
+				pdt.setM_iQuantity(pdt.getM_iQuantity() - 1);
+				param = pdt;
 			}
 		}
+		EditingDomain editingDomain = AdapterFactoryEditingDomain
+				.getEditingDomainFor(productDatabase);
 
-		/*
-		 * public Product getProduct() { return m_piProduct; }
-		 */
-		public void setSelected(boolean bSelected) {
-			if (bSelected == true) {
-				Color selectedColor = new Color(Display.getCurrent(), 0, 200, 0);
-				buyInfoPanel.setBackground(selectedColor);
-				this.setBackground(selectedColor);
-			} else {
-				setProduct(product);
-			}
+		Command command = SetCommand.create(editingDomain, productDatabase,
+				virtualVendingMachinePackage.eINSTANCE
+						.getProductDatabase_Products(), products);
+
+		editingDomain.getCommandStack().execute(command);
+
+		EObject eObject = resource.getContents().get(0); // vending Machine
+
+		ProductDatabase productDatabase = (ProductDatabase) eObject;
+
+		products = (List<Product>) productDatabase.getProducts();
+
+		this.productDatabase = productDatabase;
+
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			System.err.println("XMI not saved!");
+			throw new RuntimeException(e);
 		}
-	}
-
-	protected void buyItem(Product product) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -198,5 +142,90 @@ public class SelectorPanelDialog extends Dialog {
 		// TODO Auto-generated method stub
 
 	}
+	public double maximumChange(CashRegister cashRegister) {
 
+		double m_dNickelsAndDimes = 0.10 * cashRegister.getM_iNumDimes() + 0.05
+				* cashRegister.getM_iNumNickels();
+
+		if (cashRegister.getM_iNumNickels() == 0)
+			return 0;
+		else if (m_dNickelsAndDimes < 0.20)
+			return m_dNickelsAndDimes;
+		else
+			return 0.25 * cashRegister.getM_iNumQuarters() + m_dNickelsAndDimes;
+	}
+	
+
+	class CoinCount {
+		public int NUM_QUARTERS = 0;
+		public int NUM_DIMES = 0;
+		public int NUM_NICKELS = 0;
+	}
+
+	public void insertQuarter() {
+		if (payMachine.getM_dBalance() <= payMachine
+				.getM_dMaximumBalance() - 0.25) {
+			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.25);
+			payMachine.getM_crRegister().setM_iNumQuarters(
+					payMachine.getM_crRegister().getM_iNumQuarters() + 1);
+		} else {
+			returnChange(1, 0, 0);
+		}
+		balanceUpdated(payMachine.getM_dBalance());
+
+	}
+
+	public void insertDime() {
+		if (payMachine.getM_dBalance() <= payMachine
+				.getM_dMaximumBalance() - 0.10) {
+			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.10);
+			payMachine.getM_crRegister().setM_iNumDimes(
+					payMachine.getM_crRegister().getM_iNumDimes() + 1);
+		} else {
+			returnChange(0, 1, 0);
+
+		}
+		balanceUpdated(payMachine.getM_dBalance());
+
+	}
+
+	public void insertNickel() {
+		if (payMachine.getM_dBalance() <= payMachine
+				.getM_dMaximumBalance() - 0.05) {
+			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.05);
+			payMachine.getM_crRegister().setM_iNumNickels(
+					payMachine.getM_crRegister().getM_iNumNickels() + 1);
+		} else {
+			returnChange(0, 0, 1);
+
+		}
+
+		balanceUpdated(payMachine.getM_dBalance());
+
+	}
+
+	public boolean insertDollar() {
+		double dNewBalance = payMachine.getM_dBalance() + 1.00;
+
+		if (dNewBalance <= payMachine.getM_dMaximumBalance()) {
+			if (maximumChange(payMachine.getM_crRegister()) >= dNewBalance) {
+				payMachine.setM_dBalance(dNewBalance);
+				payMachine.getM_crRegister().setM_iNumDollars(
+						payMachine.getM_crRegister().getM_iNumDollars());
+				balanceUpdated(payMachine.getM_dBalance());
+				return true;
+			}
+		}
+
+		return false;
+	}
+	public void balanceUpdated(double dBalance) {
+		//jtfBalance.setText(NumberFormat.getCurrencyInstance().format(dBalance));
+	}
+	public void returnChange(int iQuarters, int iDimes, int iNickels) {
+		/*TODO: animation
+		 * if (m_ymfYourMoney != null) {
+			m_ymfYourMoney.coinReturn(iQuarters, iDimes, iNickels);
+		}*/
+	}
 }

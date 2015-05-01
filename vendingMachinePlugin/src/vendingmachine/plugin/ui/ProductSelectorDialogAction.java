@@ -32,21 +32,16 @@ public class ProductSelectorDialogAction implements IObjectActionDelegate {
 				try {
 					selectorPanelDialog.loadContent((IFile) firstElement);
 				} catch (IOException e) {
-					Status status = new Status(IStatus.ERROR,
-							"vendingMachine", 0,
-							e.getMessage(), null);
+					Status status = new Status(IStatus.ERROR, "vendingMachine",
+							0, e.getMessage(), null);
 					ErrorDialog.openError(shell, "Error on load",
 							"File could not be loaded", status);
 				} catch (RuntimeException e) {
-					Status status = new Status(IStatus.ERROR,
-							"vendingMachine", 0,
-							e.getMessage(), null);
-					ErrorDialog
-							.openError(
-									shell,
-									"Error on load",
-									"Probably there is no League contained in the ressource",
-									status);
+					Status status = new Status(IStatus.ERROR, "vendingMachine",
+							0, e.getMessage(), null);
+					ErrorDialog.openError(shell, "Error on load",
+							"Probably there is no Vending Machine"
+									+ " contained in the ressource", status);
 				}
 				selectorPanelDialog.open();
 			}

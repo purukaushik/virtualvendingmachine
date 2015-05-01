@@ -4,5 +4,35 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/virtualVendingMachine"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core_1.7.0.r44x201405021445.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core.databinding.xml_1.7.0.r44x201405021458.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core.databinding_1.7.0.r44x201405021448.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core.java_1.7.0.r44x201405021448.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core.ui_1.7.0.r44x201405021455.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.core.xml_1.7.0.r44x201405021458.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.doc.user_1.7.0.r44x201405021506.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.layout.group_1.7.0.r44x201405021517.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.os.linux_1.7.0.r44x201405021445.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.os_1.7.0.r44x201405021445.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.databinding.emf_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.databinding.xwt_1.7.0.r44x201405021548.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.databinding_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.doc.user_1.7.0.r44x201405030426.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.nebula_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.swing2swt_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp.SWT_AWT_1.7.0.r44x201405021546.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.rcp_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.runtime_1.7.0.r44x201405021445.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.databinding_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.doc.user_1.7.0.r44x201405030444.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.FormLayout_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.java6_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.jsr296_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.MigLayout.lib_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing.MigLayout_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swing_1.7.0.r44x201405021531.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swt.widgets.baseline_1.7.0.r44x201405021526.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.swt_1.7.0.r44x201405021519.jar"/>
+	<classpathentry kind="lib" path="/home/kaushik/eclipse/plugins/org.eclipse.wb.xwt_1.7.0.r44x201405021548.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
