@@ -1,14 +1,11 @@
 package vendingmachine.plugin.ui;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -25,17 +22,40 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import virtualVendingMachine.virtualVendingMachine.Product;
-import virtualVendingMachine.virtualVendingMachine.virtualVendingMachinePackage;
 
 public class YourMoneyComposite extends Composite {
 	private SelectorPanelDialog panelDialog;
 	private List<Product> products;
 
 	private Text cashAdded_1;
+
+	public Text getCashAdded_1() {
+		return cashAdded_1;
+	}
+
+	public void setCashAdded_1(Text cashAdded_1) {
+		this.cashAdded_1 = cashAdded_1;
+	}
+
 	private DataBindingContext context;
 	private Binding bindValue;
+	private Text notEnoughMoneyLabel;
+	private Text infoText;
+
+	public Text getInfoText() {
+		return infoText;
+	}
+
+	public Text getNotEnoughMoneyLabel() {
+		return notEnoughMoneyLabel;
+	}
+
+	public void setNotEnoughMoneyLabel(Text notEnoughMoneyLabel) {
+		this.notEnoughMoneyLabel = notEnoughMoneyLabel;
+	}
 
 	/**
 	 * Create the composite.
@@ -82,8 +102,8 @@ public class YourMoneyComposite extends Composite {
 				.addListener(SWT.Selection, new NickelListener(panelDialog));
 		Composite selectorButtons = new Composite(this, SWT.NONE);
 		FormData fd_selectorButtons = new FormData();
-		fd_selectorButtons.bottom = new FormAttachment(0, 307);
-		fd_selectorButtons.right = new FormAttachment(0, 619);
+		fd_selectorButtons.bottom = new FormAttachment(0, 470);
+		fd_selectorButtons.right = new FormAttachment(0, 737);
 		fd_selectorButtons.top = new FormAttachment(0);
 		fd_selectorButtons.left = new FormAttachment(0, 241);
 		selectorButtons.setLayoutData(fd_selectorButtons);
@@ -91,11 +111,40 @@ public class YourMoneyComposite extends Composite {
 
 		cashAdded_1 = new Text(this, SWT.NONE);
 		FormData fd_cashAdded_1 = new FormData();
-		fd_cashAdded_1.top = new FormAttachment(quartersButton, 28);
-		fd_cashAdded_1.left = new FormAttachment(quartersButton, 0, SWT.LEFT);
+		fd_cashAdded_1.right = new FormAttachment(0, 100);
+		fd_cashAdded_1.top = new FormAttachment(0, 107);
+		fd_cashAdded_1.left = new FormAttachment(0, 5);
 		cashAdded_1.setLayoutData(fd_cashAdded_1);
+		cashAdded_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+		cashAdded_1.setEnabled(false);
+		cashAdded_1.setEditable(false);
+		float roundOff = getDisplayableText(this.panelDialog.getPayMachine()
+				.getM_dBalance());
+		cashAdded_1.setText("" + roundOff);
 
-		// cashAdded.setText();
+		notEnoughMoneyLabel = new Text(this, SWT.NONE);
+		FormData fd_notEnoughMoneyLabel = new FormData();
+		fd_notEnoughMoneyLabel.right = new FormAttachment(0, 201);
+		fd_notEnoughMoneyLabel.top = new FormAttachment(0, 142);
+		fd_notEnoughMoneyLabel.left = new FormAttachment(0, 5);
+		notEnoughMoneyLabel.setLayoutData(fd_notEnoughMoneyLabel);
+		notEnoughMoneyLabel.setBackground(SWTResourceManager
+				.getColor(SWT.COLOR_RED));
+		notEnoughMoneyLabel.setText(" ");
+		notEnoughMoneyLabel.setForeground(SWTResourceManager
+				.getColor(SWT.COLOR_WHITE));
+		notEnoughMoneyLabel.setEnabled(false);
+		notEnoughMoneyLabel.setEditable(false);
+		
+		infoText = new Text(this, SWT.BORDER);
+		infoText.setEnabled(false);
+		infoText.setEditable(false);
+		FormData fd_text = new FormData();
+		fd_text.top = new FormAttachment(notEnoughMoneyLabel, 26);
+		fd_text.bottom = new FormAttachment(100);
+		fd_text.right = new FormAttachment(notEnoughMoneyLabel, 0, SWT.RIGHT);
+		fd_text.left = new FormAttachment(quartersButton, 0, SWT.LEFT);
+		infoText.setLayoutData(fd_text);
 
 		SelectorButton[] buttons = new SelectorButton[products.size()];
 		for (int i = 0; i < products.size(); i++) {
@@ -108,15 +157,12 @@ public class YourMoneyComposite extends Composite {
 
 	}
 
-	public void bindValues() {
-		cashAdded_1.setEnabled(false);
-		ISWTObservableValue observeText = SWTObservables.observeText(
-				cashAdded_1, SWT.Modify);
-		IObservableValue observeValue = EMFObservables.observeValue(
-				getPanelDialog().getPayMachine(),
-				virtualVendingMachinePackage.eINSTANCE
-						.getPayMachine_M_dBalance());
-		bindValue = context.bindValue(observeText, observeValue);
+	public static float getDisplayableText(double doubleValue) {
+		BigDecimal value = new BigDecimal(
+				Math.round(doubleValue * 100.0) / 100.0);
+
+		float roundOff = value.stripTrailingZeros().floatValue();
+		return roundOff;
 	}
 
 	@Override
@@ -150,7 +196,7 @@ public class YourMoneyComposite extends Composite {
 
 			super(parent, SWT.None);
 			this.yourMoneyComposite = yourMoneyComposite;
-			this.product = product;
+
 			buyInfoPanel = new Composite(this, SWT.None);
 			imageLabel = new Label(buyInfoPanel, SWT.TOP);
 			buyButton = new Button(buyInfoPanel, SWT.None);
@@ -170,7 +216,7 @@ public class YourMoneyComposite extends Composite {
 			infoButton.addListener(SWT.Selection, new InfoListener(panelDialog,
 					product));
 			m_bIsSelected = false;
-
+			this.setProduct(product);
 		}
 
 		public void setProduct(Product piProduct) {
@@ -227,7 +273,6 @@ public class YourMoneyComposite extends Composite {
 			}
 		}
 	}
-
 }
 
 class DimeListener implements Listener {
@@ -241,7 +286,7 @@ class DimeListener implements Listener {
 	@Override
 	public void handleEvent(Event arg0) {
 		this.panelDialog.insertDime();
-		;
+		this.panelDialog.setText();
 
 	}
 }
@@ -257,7 +302,7 @@ class QuarterListener implements Listener {
 	@Override
 	public void handleEvent(Event arg0) {
 		this.panelDialog.insertQuarter();
-		;
+		this.panelDialog.setText();
 
 	}
 }
@@ -273,7 +318,7 @@ class NickelListener implements Listener {
 	@Override
 	public void handleEvent(Event arg0) {
 		this.panelDialog.insertNickel();
-		;
+		this.panelDialog.setText();
 
 	}
 }
@@ -290,8 +335,11 @@ class BuyListener implements Listener {
 
 	@Override
 	public void handleEvent(Event arg0) {
-		this.panelDialog.buyItem(product);
+		boolean isEnoughMoney = this.panelDialog.buyItem(product);
+		if (!isEnoughMoney) {
 
+			panelDialog.setLabel("Not Enough money");
+		}
 	}
 }
 

@@ -2,8 +2,6 @@
  */
 package virtualVendingMachine.virtualVendingMachine;
 
-import javax.swing.Icon;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -167,12 +165,12 @@ public interface Product extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>MiIcon</em>' attribute.
-	 * @see #setM_iIcon(Icon)
+	 * @see #setM_iIcon(String)
 	 * @see virtualVendingMachine.virtualVendingMachine.virtualVendingMachinePackage#getProduct_M_iIcon()
-	 * @model dataType="virtualVendingMachine.virtualVendingMachine.Icon"
+	 * @model
 	 * @generated
 	 */
-	Icon getM_iIcon();
+	String getM_iIcon();
 
 	/**
 	 * Sets the value of the '{@link virtualVendingMachine.virtualVendingMachine.Product#getM_iIcon <em>MiIcon</em>}' attribute.
@@ -182,6 +180,6 @@ public interface Product extends EObject {
 	 * @see #getM_iIcon()
 	 * @generated
 	 */
-	void setM_iIcon(Icon value);
+	void setM_iIcon(String value);
 
 } // Product

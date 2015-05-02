@@ -2,15 +2,10 @@
  */
 package virtualVendingMachine.virtualVendingMachine.impl;
 
-import javax.swing.Icon;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import virtualVendingMachine.virtualVendingMachine.Product;
 import virtualVendingMachine.virtualVendingMachine.virtualVendingMachinePackage;
 
@@ -141,7 +136,7 @@ public class ProductImpl extends MinimalEObjectImpl.Container implements Product
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Icon MIICON_EDEFAULT = null;
+	protected static final String MIICON_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getM_iIcon() <em>MiIcon</em>}' attribute.
@@ -151,7 +146,7 @@ public class ProductImpl extends MinimalEObjectImpl.Container implements Product
 	 * @generated
 	 * @ordered
 	 */
-	protected Icon m_iIcon = MIICON_EDEFAULT;
+	protected String m_iIcon = MIICON_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -282,7 +277,7 @@ public class ProductImpl extends MinimalEObjectImpl.Container implements Product
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Icon getM_iIcon() {
+	public String getM_iIcon() {
 		return m_iIcon;
 	}
 
@@ -291,8 +286,8 @@ public class ProductImpl extends MinimalEObjectImpl.Container implements Product
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setM_iIcon(Icon newM_iIcon) {
-		Icon oldM_iIcon = m_iIcon;
+	public void setM_iIcon(String newM_iIcon) {
+		String oldM_iIcon = m_iIcon;
 		m_iIcon = newM_iIcon;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, virtualVendingMachinePackage.PRODUCT__MIICON, oldM_iIcon, m_iIcon));
@@ -346,7 +341,7 @@ public class ProductImpl extends MinimalEObjectImpl.Container implements Product
 				setM_iQuantity((Integer)newValue);
 				return;
 			case virtualVendingMachinePackage.PRODUCT__MIICON:
-				setM_iIcon((Icon)newValue);
+				setM_iIcon((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

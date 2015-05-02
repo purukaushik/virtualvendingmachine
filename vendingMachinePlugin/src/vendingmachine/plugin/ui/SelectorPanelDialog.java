@@ -30,7 +30,6 @@ import virtualVendingMachine.virtualVendingMachine.virtualVendingMachinePackage;
 
 public class SelectorPanelDialog extends Dialog {
 
-	
 	private ComposedAdapterFactory composedAdapterFactory;
 	private Resource resource;
 	private List<Product> products;
@@ -38,6 +37,7 @@ public class SelectorPanelDialog extends Dialog {
 	private CashRegister cashRegister;
 	private PayMachine payMachine;
 	private YourMoneyComposite root;
+
 	public ComposedAdapterFactory getComposedAdapterFactory() {
 		return composedAdapterFactory;
 	}
@@ -69,9 +69,8 @@ public class SelectorPanelDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
-		root = new YourMoneyComposite(parent, SWT.NONE,
-				products,this);
+
+		root = new YourMoneyComposite(parent, SWT.NONE, products, this);
 
 		root.layout();
 		parent.pack();
@@ -91,7 +90,7 @@ public class SelectorPanelDialog extends Dialog {
 				.getM_crRegister();
 		this.productDatabase = virtualVendingMachine.getM_pdProducts();
 		products = (List<Product>) productDatabase.getProducts();
-		root.bindValues();
+
 	}
 
 	protected AdapterFactory getAdapterFactory() {
@@ -102,46 +101,61 @@ public class SelectorPanelDialog extends Dialog {
 		return composedAdapterFactory;
 	}
 
-	protected void buyItem(Product param) {
+	protected boolean buyItem(Product param) {
 
 		int productId = param.getM_iID();
 
 		for (Product pdt : products) {
 			if (productId == pdt.getM_iID()) {
-				pdt.setM_iQuantity(pdt.getM_iQuantity() - 1);
-				param = pdt;
+				double money = this.payMachine.getM_dBalance();
+				double price = pdt.getM_dPrice();
+				if (money >= price) {
+					pdt.setM_iQuantity(pdt.getM_iQuantity() - 1);
+					param = pdt;
+					this.payMachine.setM_dBalance(money - price);
+					
+					try {
+						resource.save(null);
+					} catch (IOException e) {
+
+						e.printStackTrace();
+					}
+					this.setText();
+				} else {
+					return false;
+				}
 			}
 		}
-		EditingDomain editingDomain = AdapterFactoryEditingDomain
-				.getEditingDomainFor(productDatabase);
+		/*
+		 * EditingDomain editingDomain = AdapterFactoryEditingDomain
+		 * .getEditingDomainFor(productDatabase);
+		 * 
+		 * Command command = SetCommand.create(editingDomain, productDatabase,
+		 * virtualVendingMachinePackage.eINSTANCE
+		 * .getProductDatabase_Products(), products);
+		 * 
+		 * editingDomain.getCommandStack().execute(command);/
+		 * 
+		 * EObject eObject = resource.getContents().get(0); // vending Machine
+		 * VirtualVendingMachine virtualVendingMachine = (VirtualVendingMachine)
+		 * eObject;
+		 * 
+		 * ProductDatabase productDatabase =
+		 * virtualVendingMachine.getM_pdProducts();
+		 * 
+		 * products = (List<Product>) productDatabase.getProducts();
+		 * 
+		 * this.productDatabase = productDatabase;
+		 */
 
-		Command command = SetCommand.create(editingDomain, productDatabase,
-				virtualVendingMachinePackage.eINSTANCE
-						.getProductDatabase_Products(), products);
-
-		editingDomain.getCommandStack().execute(command);
-
-		EObject eObject = resource.getContents().get(0); // vending Machine
-
-		ProductDatabase productDatabase = (ProductDatabase) eObject;
-
-		products = (List<Product>) productDatabase.getProducts();
-
-		this.productDatabase = productDatabase;
-
-		try {
-			resource.save(null);
-		} catch (IOException e) {
-			System.err.println("XMI not saved!");
-			throw new RuntimeException(e);
-		}
-
+		return true;
 	}
 
 	protected void showInfo(Product product) {
-		// TODO Auto-generated method stub
+		root.getInfoText().setText(product.getM_sDescription());
 
 	}
+
 	public double maximumChange(CashRegister cashRegister) {
 
 		double m_dNickelsAndDimes = 0.10 * cashRegister.getM_iNumDimes() + 0.05
@@ -154,7 +168,6 @@ public class SelectorPanelDialog extends Dialog {
 		else
 			return 0.25 * cashRegister.getM_iNumQuarters() + m_dNickelsAndDimes;
 	}
-	
 
 	class CoinCount {
 		public int NUM_QUARTERS = 0;
@@ -163,8 +176,7 @@ public class SelectorPanelDialog extends Dialog {
 	}
 
 	public void insertQuarter() {
-		if (payMachine.getM_dBalance() <= payMachine
-				.getM_dMaximumBalance() - 0.25) {
+		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.25) {
 			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.25);
 			payMachine.getM_crRegister().setM_iNumQuarters(
 					payMachine.getM_crRegister().getM_iNumQuarters() + 1);
@@ -176,8 +188,7 @@ public class SelectorPanelDialog extends Dialog {
 	}
 
 	public void insertDime() {
-		if (payMachine.getM_dBalance() <= payMachine
-				.getM_dMaximumBalance() - 0.10) {
+		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.10) {
 			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.10);
 			payMachine.getM_crRegister().setM_iNumDimes(
 					payMachine.getM_crRegister().getM_iNumDimes() + 1);
@@ -190,8 +201,7 @@ public class SelectorPanelDialog extends Dialog {
 	}
 
 	public void insertNickel() {
-		if (payMachine.getM_dBalance() <= payMachine
-				.getM_dMaximumBalance() - 0.05) {
+		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.05) {
 			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.05);
 			payMachine.getM_crRegister().setM_iNumNickels(
 					payMachine.getM_crRegister().getM_iNumNickels() + 1);
@@ -219,13 +229,28 @@ public class SelectorPanelDialog extends Dialog {
 
 		return false;
 	}
+
 	public void balanceUpdated(double dBalance) {
-		//jtfBalance.setText(NumberFormat.getCurrencyInstance().format(dBalance));
+		// jtfBalance.setText(NumberFormat.getCurrencyInstance().format(dBalance));
 	}
+
 	public void returnChange(int iQuarters, int iDimes, int iNickels) {
-		/*TODO: animation
-		 * if (m_ymfYourMoney != null) {
-			m_ymfYourMoney.coinReturn(iQuarters, iDimes, iNickels);
-		}*/
+		/*
+		 * TODO: animation if (m_ymfYourMoney != null) {
+		 * m_ymfYourMoney.coinReturn(iQuarters, iDimes, iNickels); }
+		 */
+	}
+
+	public void setText() {
+		root.getCashAdded_1().setText(
+				""
+						+ YourMoneyComposite.getDisplayableText(this.payMachine
+								.getM_dBalance()));
+	}
+
+	public void setLabel(String arg) {
+		root.getNotEnoughMoneyLabel().setText(arg);
+		root.redraw();
+		root.update();
 	}
 }
