@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import vendingmachine.plugin.ui.SelectorPanelDialog.Coin;
 import virtualVendingMachine.virtualVendingMachine.Product;
 
 public class YourMoneyComposite extends Composite {
@@ -79,8 +80,8 @@ public class YourMoneyComposite extends Composite {
 		quartersButton
 				.setImage(SWTResourceManager
 						.getImage("/home/kaushik/vendingmachine/vendingmachine/virtualVendingMachineFinal/images/QUARTER.JPG"));
-		quartersButton.addListener(SWT.Selection, new QuarterListener(
-				panelDialog));
+		quartersButton.addListener(SWT.Selection, new CoinListener(panelDialog,
+				Coin.QUARTER));
 		Button dimeButton = new Button(this, SWT.NONE);
 		FormData fd_dimeButton = new FormData();
 		fd_dimeButton.top = new FormAttachment(0, 5);
@@ -89,7 +90,8 @@ public class YourMoneyComposite extends Composite {
 		dimeButton
 				.setImage(SWTResourceManager
 						.getImage("/home/kaushik/vendingmachine/vendingmachine/virtualVendingMachineFinal/images/DIME.JPG"));
-		dimeButton.addListener(SWT.Selection, new DimeListener(panelDialog));
+		dimeButton.addListener(SWT.Selection, new CoinListener(panelDialog,
+				Coin.DIME));
 		Button nickelButton = new Button(this, SWT.NONE);
 		FormData fd_nickelButton = new FormData();
 		fd_nickelButton.top = new FormAttachment(0, 5);
@@ -98,8 +100,8 @@ public class YourMoneyComposite extends Composite {
 		nickelButton
 				.setImage(SWTResourceManager
 						.getImage("/home/kaushik/vendingmachine/vendingmachine/virtualVendingMachineFinal/images/NICKEL.JPG"));
-		nickelButton
-				.addListener(SWT.Selection, new NickelListener(panelDialog));
+		nickelButton.addListener(SWT.Selection, new CoinListener(panelDialog,
+				Coin.NICKEL));
 		Composite selectorButtons = new Composite(this, SWT.NONE);
 		FormData fd_selectorButtons = new FormData();
 		fd_selectorButtons.bottom = new FormAttachment(0, 470);
@@ -135,7 +137,7 @@ public class YourMoneyComposite extends Composite {
 				.getColor(SWT.COLOR_WHITE));
 		notEnoughMoneyLabel.setEnabled(false);
 		notEnoughMoneyLabel.setEditable(false);
-		
+
 		infoText = new Text(this, SWT.BORDER);
 		infoText.setEnabled(false);
 		infoText.setEditable(false);
@@ -275,49 +277,18 @@ public class YourMoneyComposite extends Composite {
 	}
 }
 
-class DimeListener implements Listener {
+class CoinListener implements Listener {
 	private SelectorPanelDialog panelDialog;
+	private Coin coin;
 
-	public DimeListener(SelectorPanelDialog panelDialog) {
+	public CoinListener(SelectorPanelDialog panelDialog, Coin coin) {
 		this.panelDialog = panelDialog;
-
+		this.coin = coin;
 	}
 
 	@Override
 	public void handleEvent(Event arg0) {
-		this.panelDialog.insertDime();
-		this.panelDialog.setText();
-
-	}
-}
-
-class QuarterListener implements Listener {
-	private SelectorPanelDialog panelDialog;
-
-	public QuarterListener(SelectorPanelDialog panelDialog) {
-		this.panelDialog = panelDialog;
-
-	}
-
-	@Override
-	public void handleEvent(Event arg0) {
-		this.panelDialog.insertQuarter();
-		this.panelDialog.setText();
-
-	}
-}
-
-class NickelListener implements Listener {
-	private SelectorPanelDialog panelDialog;
-
-	public NickelListener(SelectorPanelDialog panelDialog) {
-		this.panelDialog = panelDialog;
-
-	}
-
-	@Override
-	public void handleEvent(Event arg0) {
-		this.panelDialog.insertNickel();
+		this.panelDialog.insertCoin(coin);
 		this.panelDialog.setText();
 
 	}

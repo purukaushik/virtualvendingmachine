@@ -86,10 +86,17 @@ public class SelectorPanelDialog extends Dialog {
 		EObject eObject = resource.getContents().get(0); // vending Machine
 		VirtualVendingMachine virtualVendingMachine = (VirtualVendingMachine) eObject;
 		this.payMachine = virtualVendingMachine.getM_pmPayMachine();
+		resetPayMachine();
 		this.cashRegister = virtualVendingMachine.getM_pmPayMachine()
 				.getM_crRegister();
 		this.productDatabase = virtualVendingMachine.getM_pdProducts();
 		products = (List<Product>) productDatabase.getProducts();
+
+	}
+
+	private void resetPayMachine() {
+
+		this.payMachine.setM_dBalance(0.0d);
 
 	}
 
@@ -113,7 +120,7 @@ public class SelectorPanelDialog extends Dialog {
 					pdt.setM_iQuantity(pdt.getM_iQuantity() - 1);
 					param = pdt;
 					this.payMachine.setM_dBalance(money - price);
-					
+
 					try {
 						resource.save(null);
 					} catch (IOException e) {
@@ -153,7 +160,6 @@ public class SelectorPanelDialog extends Dialog {
 
 	protected void showInfo(Product product) {
 		root.getInfoText().setText(product.getM_sDescription());
-
 	}
 
 	public double maximumChange(CashRegister cashRegister) {
@@ -175,44 +181,87 @@ public class SelectorPanelDialog extends Dialog {
 		public int NUM_NICKELS = 0;
 	}
 
-	public void insertQuarter() {
-		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.25) {
-			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.25);
-			payMachine.getM_crRegister().setM_iNumQuarters(
-					payMachine.getM_crRegister().getM_iNumQuarters() + 1);
-		} else {
-			returnChange(1, 0, 0);
-		}
-		balanceUpdated(payMachine.getM_dBalance());
+	enum Coin {
+		QUARTER(0.25), DIME(0.1), NICKEL(0.05);
 
-	}
+		double value;
 
-	public void insertDime() {
-		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.10) {
-			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.10);
-			payMachine.getM_crRegister().setM_iNumDimes(
-					payMachine.getM_crRegister().getM_iNumDimes() + 1);
-		} else {
-			returnChange(0, 1, 0);
-
-		}
-		balanceUpdated(payMachine.getM_dBalance());
-
-	}
-
-	public void insertNickel() {
-		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.05) {
-			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.05);
-			payMachine.getM_crRegister().setM_iNumNickels(
-					payMachine.getM_crRegister().getM_iNumNickels() + 1);
-		} else {
-			returnChange(0, 0, 1);
-
+		private Coin(double value) {
+			this.value = value;
 		}
 
-		balanceUpdated(payMachine.getM_dBalance());
-
+		public double getValue() {
+			return value;
+		}
 	}
+
+	public void insertCoin(Coin coin) {
+		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance()
+				- coin.getValue()) {
+			payMachine.setM_dBalance(payMachine.getM_dBalance()
+					+ coin.getValue());
+
+			switch (coin) {
+			case QUARTER:
+				payMachine.getM_crRegister().setM_iNumQuarters(
+						payMachine.getM_crRegister().getM_iNumQuarters() + 1);
+
+				break;
+			case DIME:
+				payMachine.getM_crRegister().setM_iNumDimes(
+						payMachine.getM_crRegister().getM_iNumDimes() + 1);
+
+				break;
+			case NICKEL:
+				payMachine.getM_crRegister().setM_iNumNickels(
+						payMachine.getM_crRegister().getM_iNumNickels() + 1);
+
+				break;
+			default:
+				break;
+			}
+		}
+		balanceUpdated(payMachine.getM_dBalance());
+	}
+//
+//	public void insertQuarter() {
+//		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.25) {
+//			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.25);
+//			payMachine.getM_crRegister().setM_iNumQuarters(
+//					payMachine.getM_crRegister().getM_iNumQuarters() + 1);
+//		} else {
+//			returnChange(1, 0, 0);
+//		}
+//		
+//
+//	}
+//
+//	public void insertDime() {
+//		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.10) {
+//			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.10);
+//			payMachine.getM_crRegister().setM_iNumDimes(
+//					payMachine.getM_crRegister().getM_iNumDimes() + 1);
+//		} else {
+//			returnChange(0, 1, 0);
+//
+//		}
+//		balanceUpdated(payMachine.getM_dBalance());
+//
+//	}
+//
+//	public void insertNickel() {
+//		if (payMachine.getM_dBalance() <= payMachine.getM_dMaximumBalance() - 0.05) {
+//			payMachine.setM_dBalance(payMachine.getM_dBalance() + 0.05);
+//			payMachine.getM_crRegister().setM_iNumNickels(
+//					payMachine.getM_crRegister().getM_iNumNickels() + 1);
+//		} else {
+//			returnChange(0, 0, 1);
+//
+//		}
+//
+//		balanceUpdated(payMachine.getM_dBalance());
+//
+//	}
 
 	public boolean insertDollar() {
 		double dNewBalance = payMachine.getM_dBalance() + 1.00;
@@ -246,6 +295,8 @@ public class SelectorPanelDialog extends Dialog {
 				""
 						+ YourMoneyComposite.getDisplayableText(this.payMachine
 								.getM_dBalance()));
+		root.getNotEnoughMoneyLabel().setText("");
+		;
 	}
 
 	public void setLabel(String arg) {
