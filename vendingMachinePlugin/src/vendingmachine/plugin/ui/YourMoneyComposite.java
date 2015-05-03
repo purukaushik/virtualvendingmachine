@@ -22,12 +22,18 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import vendingmachine.plugin.ui.SelectorPanelDialog.Coin;
 import virtualVendingMachine.virtualVendingMachine.Product;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class YourMoneyComposite extends Composite {
+
+	private static final int QRTR_BUTTON_ID = 1;
+	private static final int NICKEL_BUTTON_ID = 2;
+	private static final int DIME_BUTTON_ID = 3;
+	private static final int DOLLAR_BUTTON_ID = 4;
+	private SelectorButton[] productSelectorButtons;
 	private SelectorPanelDialog panelDialog;
 	private List<Product> products;
 
@@ -45,6 +51,17 @@ public class YourMoneyComposite extends Composite {
 	private Binding bindValue;
 	private Text notEnoughMoneyLabel;
 	private Text infoText;
+
+	public Text getReturnedChange() {
+		return returnedChange;
+	}
+
+	public void setReturnedChange(Text returnedChange) {
+		this.returnedChange = returnedChange;
+	}
+
+	private Text returnedChange;
+	private Label lblReturnedChange;
 
 	public Text getInfoText() {
 		return infoText;
@@ -76,12 +93,14 @@ public class YourMoneyComposite extends Composite {
 		FormData fd_quartersButton = new FormData();
 		fd_quartersButton.top = new FormAttachment(0, 5);
 		fd_quartersButton.left = new FormAttachment(0, 5);
+
 		quartersButton.setLayoutData(fd_quartersButton);
 		quartersButton
 				.setImage(SWTResourceManager
 						.getImage("/home/kaushik/vendingmachine/vendingmachine/virtualVendingMachineFinal/images/QUARTER.JPG"));
 		quartersButton.addListener(SWT.Selection, new CoinListener(panelDialog,
 				Coin.QUARTER));
+
 		Button dimeButton = new Button(this, SWT.NONE);
 		FormData fd_dimeButton = new FormData();
 		fd_dimeButton.top = new FormAttachment(0, 5);
@@ -94,8 +113,8 @@ public class YourMoneyComposite extends Composite {
 				Coin.DIME));
 		Button nickelButton = new Button(this, SWT.NONE);
 		FormData fd_nickelButton = new FormData();
-		fd_nickelButton.top = new FormAttachment(0, 5);
-		fd_nickelButton.left = new FormAttachment(0, 163);
+		fd_nickelButton.top = new FormAttachment(quartersButton, 0, SWT.TOP);
+		fd_nickelButton.left = new FormAttachment(dimeButton, 6);
 		nickelButton.setLayoutData(fd_nickelButton);
 		nickelButton
 				.setImage(SWTResourceManager
@@ -104,10 +123,10 @@ public class YourMoneyComposite extends Composite {
 				Coin.NICKEL));
 		Composite selectorButtons = new Composite(this, SWT.NONE);
 		FormData fd_selectorButtons = new FormData();
-		fd_selectorButtons.bottom = new FormAttachment(0, 470);
-		fd_selectorButtons.right = new FormAttachment(0, 737);
-		fd_selectorButtons.top = new FormAttachment(0);
-		fd_selectorButtons.left = new FormAttachment(0, 241);
+		fd_selectorButtons.top = new FormAttachment(quartersButton, 0, SWT.TOP);
+		fd_selectorButtons.right = new FormAttachment(100, -30);
+		fd_selectorButtons.bottom = new FormAttachment(0, 475);
+		fd_selectorButtons.left = new FormAttachment(0, 664);
 		selectorButtons.setLayoutData(fd_selectorButtons);
 		selectorButtons.setLayout(new GridLayout(1, false));
 
@@ -120,7 +139,7 @@ public class YourMoneyComposite extends Composite {
 		cashAdded_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		cashAdded_1.setEnabled(false);
 		cashAdded_1.setEditable(false);
-		float roundOff = getDisplayableText(this.panelDialog.getPayMachine()
+		float roundOff = getCurrencyRounded(this.panelDialog.getPayMachine()
 				.getM_dBalance());
 		cashAdded_1.setText("" + roundOff);
 
@@ -138,20 +157,47 @@ public class YourMoneyComposite extends Composite {
 		notEnoughMoneyLabel.setEnabled(false);
 		notEnoughMoneyLabel.setEditable(false);
 
-		infoText = new Text(this, SWT.BORDER);
+		infoText = new Text(this, SWT.WRAP);
 		infoText.setEnabled(false);
 		infoText.setEditable(false);
 		FormData fd_text = new FormData();
+		fd_text.right = new FormAttachment(selectorButtons, -427);
+		fd_text.left = new FormAttachment(0, 5);
 		fd_text.top = new FormAttachment(notEnoughMoneyLabel, 26);
 		fd_text.bottom = new FormAttachment(100);
-		fd_text.right = new FormAttachment(notEnoughMoneyLabel, 0, SWT.RIGHT);
-		fd_text.left = new FormAttachment(quartersButton, 0, SWT.LEFT);
 		infoText.setLayoutData(fd_text);
 
-		SelectorButton[] buttons = new SelectorButton[products.size()];
+		this.productSelectorButtons = new SelectorButton[products.size()];
+
+		Button btnNewButton = new Button(this, SWT.NONE);
+		btnNewButton.setImage(SWTResourceManager
+				.getImage("/home/kaushik/images/DOLLAR.JPG"));
+		FormData fd_btnNewButton = new FormData();
+		fd_btnNewButton.top = new FormAttachment(quartersButton, 0, SWT.TOP);
+		fd_btnNewButton.left = new FormAttachment(nickelButton, 6);
+		btnNewButton.setLayoutData(fd_btnNewButton);
+
+		returnedChange = new Text(this, SWT.BORDER);
+		returnedChange.setEnabled(false);
+		returnedChange.setEditable(false);
+		FormData rtc_text = new FormData();
+		rtc_text.top = new FormAttachment(btnNewButton);
+		rtc_text.right = new FormAttachment(selectorButtons, -192);
+		returnedChange.setLayoutData(rtc_text);
+
+		lblReturnedChange = new Label(this, SWT.NONE);
+		FormData fd_lblReturnedChange = new FormData();
+		fd_lblReturnedChange.bottom = new FormAttachment(cashAdded_1, 0,
+				SWT.BOTTOM);
+		fd_lblReturnedChange.right = new FormAttachment(returnedChange, -17);
+		lblReturnedChange.setLayoutData(fd_lblReturnedChange);
+		lblReturnedChange.setVisible(false);
+		lblReturnedChange.setText("Returned Change:");
+		btnNewButton.addListener(SWT.Selection, new CoinListener(panelDialog,
+				Coin.DOLLAR));
 		for (int i = 0; i < products.size(); i++) {
-			buttons[i] = new SelectorButton(selectorButtons, this,
-					products.get(i));
+			productSelectorButtons[i] = new SelectorButton(selectorButtons,
+					this, products.get(i));
 
 		}
 
@@ -159,7 +205,15 @@ public class YourMoneyComposite extends Composite {
 
 	}
 
-	public static float getDisplayableText(double doubleValue) {
+	public Label getLblReturnedChange() {
+		return lblReturnedChange;
+	}
+
+	public void setLblReturnedChange(Label lblReturnedChange) {
+		this.lblReturnedChange = lblReturnedChange;
+	}
+
+	public static float getCurrencyRounded(double doubleValue) {
 		BigDecimal value = new BigDecimal(
 				Math.round(doubleValue * 100.0) / 100.0);
 
@@ -180,6 +234,15 @@ public class YourMoneyComposite extends Composite {
 		this.panelDialog = panelDialog;
 	}
 
+	public void updateDisplay(Product product) {
+
+		for (SelectorButton selectorButton : productSelectorButtons) {
+			if ((product.getM_iID() == selectorButton.getProduct().getM_iID())) {
+				selectorButton.setProduct(product);
+			}
+		}
+	}
+
 	class SelectorButton extends Composite {
 		private YourMoneyComposite yourMoneyComposite;
 
@@ -187,11 +250,25 @@ public class YourMoneyComposite extends Composite {
 		private Button buyButton;
 		private Button infoButton;
 		private Product product;
+
+		public Product getProduct() {
+			return product;
+		}
+
 		private Label priceLabel;
 		private Image productImage;
 		private Label imageLabel;
 		// private Product m_piProduct;
 		private boolean m_bIsSelected;
+		private int quantity = 0;
+
+		public int getQuantity() {
+			return quantity;
+		}
+
+		public void setQuantity(int quantity) {
+			this.quantity = quantity;
+		}
 
 		public SelectorButton(Composite parent,
 				YourMoneyComposite yourMoneyComposite, Product product) {
@@ -274,6 +351,7 @@ public class YourMoneyComposite extends Composite {
 				setProduct(product);
 			}
 		}
+
 	}
 }
 
@@ -288,7 +366,11 @@ class CoinListener implements Listener {
 
 	@Override
 	public void handleEvent(Event arg0) {
-		this.panelDialog.insertCoin(coin);
+		if (!coin.equals(Coin.DOLLAR)) {
+			this.panelDialog.insertCoin(coin);
+		} else {
+			this.panelDialog.insertDollar();
+		}
 		this.panelDialog.setText();
 
 	}
